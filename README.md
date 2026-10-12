@@ -1,4 +1,4 @@
-# Omarchy Clock 2.1.2
+# Omarchy Clock 2.1.3
 
 A native Qt Quick timekeeping app for Omarchy. It follows the current Omarchy colors and font, runs locally, and keeps clocks active while its window is hidden in the tray.
 
@@ -15,6 +15,13 @@ Captured from the native app alone on an empty Omarchy workspace, using illustra
 ![Offline city selection map and world clocks](docs/images/world-clocks.png)
 
 ![Stopwatch in Focus mode with fractions beside seconds](docs/images/stopwatch.png)
+
+<details>
+<summary>Fullscreen interval Focus with horizontal controls</summary>
+
+![Pomodoro fullscreen Focus with a centered horizontal action row](docs/images/focus-intervals.png)
+
+</details>
 
 The compact display stays open when the main window is hidden, and shrinks down to 160×110:
 

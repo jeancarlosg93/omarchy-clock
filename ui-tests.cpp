@@ -290,6 +290,38 @@ int main(int argc, char **argv) {
                                   Q_ARG(QVariant, QVariant("stopwatch")),
                                   Q_ARG(QVariant, QVariant("stopwatch"))));
   CHECK(window->property("focusMode").toBool());
+  // Focus actions wrap at the minimum size and return to one horizontal row
+  // after enlarging, including when the selected clock changes its buttons.
+  for (const auto &kind : {"interval", "timer", "stopwatch", "world"}) {
+    QString id = QString(kind) == "interval" ? window->property("intervalId").toString()
+                 : QString(kind) == "timer" ? window->property("timerId").toString()
+                 : QString(kind) == "world" ? "UTC" : "stopwatch";
+    CHECK(QMetaObject::invokeMethod(window, "enterFocus",
+                                    Q_ARG(QVariant, QVariant(kind)),
+                                    Q_ARG(QVariant, QVariant(id))));
+    for (const auto &size : {QSize(380, 460), QSize(2560, 1440), QSize(1150, 780)}) {
+      window->resize(size);
+      QTest::qWait(30);
+      auto actions = qobject_cast<QQuickItem *>(control("focusActions"));
+      CHECK(actions && actions->isVisible());
+      qreal rowY = -1;
+      for (auto item : actions->childItems()) {
+        if (!item->isVisible()) continue;
+        auto position = item->mapToScene(QPointF());
+        CHECK(position.x() >= 0 && position.y() >= 0);
+        CHECK(position.x() + item->width() <= window->width() + 1);
+        CHECK(position.y() + item->height() <= window->height() + 1);
+        if (size.width() > 380) {
+          if (rowY < 0) rowY = item->y();
+          CHECK(std::abs(item->y() - rowY) < 1);
+        }
+      }
+      CHECK(actions->height() <= 88);
+    }
+  }
+  CHECK(QMetaObject::invokeMethod(window, "enterFocus",
+                                  Q_ARG(QVariant, QVariant("stopwatch")),
+                                  Q_ARG(QVariant, QVariant("stopwatch"))));
   QTest::keyClick(window, Qt::Key_Escape);
   CHECK(!window->property("focusMode").toBool());
   CHECK(QMetaObject::invokeMethod(window, "toggleCompact"));

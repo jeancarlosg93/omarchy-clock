@@ -163,7 +163,7 @@ except Exception:
             path.unlink()
     subprocess.run(['hyprctl', 'reload'], check=False, capture_output=True)
     raise
-print('Installed Omarchy Clock 2.1.2:', target)
+print('Installed Omarchy Clock 2.1.3:', target)
 print('Backups:', backup_root)
 print('Show/hide:', 'Super+Ctrl+Alt+' + show_key.upper())
 print('Start/pause:', 'Super+Ctrl+Alt+' + pause_key.capitalize())

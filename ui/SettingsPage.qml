@@ -53,7 +53,7 @@ ScrollView {
         Text { text: "Your clocks and history are stored in a local SQLite database. There is no account, cloud sync, or network connection."; color: theme.colors.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Text { text: engine.storagePath; color: theme.colors.muted; font.family: theme.fontFamily; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WrapAnywhere }
         Flow { Layout.fillWidth: true; spacing: 8; AppButton { text: "Open data folder"; onClicked: shell.openDataFolder() } AppButton { text: "Export all history"; onClicked: appWindow.exportHistory("", "") } AppButton { text: "Quit app"; onClicked: appWindow.requestQuit() } }
-        Text { text: "Omarchy Clock 2.1.2 · Qt Quick"; color: theme.colors.muted; font.pixelSize: 12 }
+        Text { text: "Omarchy Clock 2.1.3 · Qt Quick"; color: theme.colors.muted; font.pixelSize: 12 }
         Item { Layout.preferredHeight: 12 }
     }
 }
