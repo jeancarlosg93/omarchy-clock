@@ -1,4 +1,4 @@
-# Omarchy Clock 2.1.3
+# Omarchy Clock 2.1.4
 
 A native Qt Quick timekeeping app for Omarchy. It follows the current Omarchy colors and font, runs locally, and keeps clocks active while its window is hidden in the tray.
 

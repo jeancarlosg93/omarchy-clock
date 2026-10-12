@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   QApplication app(argc, argv);
   app.setApplicationName("Omarchy Clock");
   app.setOrganizationName("OmarchyClock");
-  app.setApplicationVersion("2.1.3");
+  app.setApplicationVersion("2.1.4");
   app.setDesktopFileName("omarchy-clock");
   app.setWindowIcon(QIcon(":/omarchy-clock.svg"));
   app.setQuitOnLastWindowClosed(false);
