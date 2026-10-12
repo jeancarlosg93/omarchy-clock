@@ -65,7 +65,7 @@ ScrollView {
                         Text { text: info.title; color: theme.colors.foreground; font.pixelSize: 19; font.weight: Font.Medium; Layout.fillWidth: true; elide: Text.ElideRight }
                         Text { text: info.zone; color: theme.colors.muted; font.pixelSize: 12; Layout.fillWidth: true; elide: Text.ElideRight }
                     }
-                    AppButton { iconName: "focus"; tip: "Focus live clock"; onClicked: appWindow.enterFocus("world", modelData) }
+                    AppButton { text: appWindow.focusKind === "world" && appWindow.focusId === modelData ? "Selected" : "Select"; selected: appWindow.focusKind === "world" && appWindow.focusId === modelData; tip: "Select this clock, then use Focus in the header"; onClicked: appWindow.setFocusClock("world", modelData) }
                     AppButton { iconName: "trash"; tip: "Remove world clock"; onClicked: engine.removeZone(modelData) }
                 }
                 Text { text: info.display; color: theme.colors.foreground; font.family: theme.fontFamily; font.pixelSize: page.width < 500 ? 38 : 50; Layout.fillWidth: true; elide: Text.ElideRight }

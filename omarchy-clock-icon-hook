@@ -1,0 +1,4 @@
+#!/bin/sh
+# Theme-set hook: update the launcher mark without starting the clock suite.
+export QT_QPA_PLATFORM=offscreen
+exec "$HOME/.local/bin/omarchy-clock" --update-icon

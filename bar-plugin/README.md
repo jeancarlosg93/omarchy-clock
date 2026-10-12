@@ -1,6 +1,6 @@
 # Omarchy Clock bar widget
 
-This user-owned plugin displays the native app's running timer, stopwatch, interval or tracking activity. It follows the Omarchy bar font and colors. It is installed beside Chime; Chime's own clocks remain independent.
+This user-owned plugin displays the native app's running timer, stopwatch, interval or tracking activity. It follows the Omarchy bar font and colors, using the native Nerd Font clock-outline glyph (U+F0150) beside the readout. It is installed beside Chime; Chime's own clocks remain independent.
 
 Left-click opens the displayed clock in the app's Focus view. Right-click pauses/resumes that exact clock. Middle-click opens its compact display. A `+N` suffix indicates additional active clocks; hover lists all of them. When all clocks are paused, the last displayed paused clock remains available for resume. Ready or finished clocks disappear. Settings → Background operation → Show active clocks in the Omarchy bar can hide this widget.
 

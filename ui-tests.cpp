@@ -1,4 +1,5 @@
 #include "clockmodel.h"
+#include "appicon.h"
 #include "desktop.h"
 #include "timekeeper.h"
 #include <QApplication>
@@ -368,6 +369,11 @@ int main(int argc, char **argv) {
             item->property("width").toDouble());
     CHECK(item->property("width").toDouble() <= 344);
   }
+  CHECK(control("focusButton")->property("visible").toBool());
+  CHECK(click("focusButton"));
+  CHECK(window->property("focusMode").toBool());
+  CHECK(click("focusButton"));
+  CHECK(!window->property("focusMode").toBool());
   CHECK(go("Timers"));
   CHECK(click("addTimerButton"));
   CHECK(go("Alarms"));
@@ -680,6 +686,50 @@ int main(int argc, char **argv) {
   keeper.setSetting("barVisible", false);
   CHECK(!desktop.barStatus()["enabled"].toBool());
   keeper.pauseAll();
+  // Theme colors reach the actual application icon without an opaque tile.
+  auto iconImage = QApplication::windowIcon().pixmap(32, 32).toImage();
+  CHECK(iconImage.pixelColor(0, 0).alpha() == 0);
+  int opaquePixels = 0;
+  for (int y = 0; y < iconImage.height(); ++y)
+    for (int x = 0; x < iconImage.width(); ++x) {
+      auto pixel = iconImage.pixelColor(x, y);
+      if (pixel.alpha() == 255) {
+        ++opaquePixels;
+        CHECK(pixel == theme.colors()["foreground"].value<QColor>());
+      }
+    }
+  CHECK(opaquePixels > 100);
+  // The standalone theme hook updates launcher color and cache identity while
+  // preserving the user's other desktop-entry fields, without a clock backend.
+  QTemporaryDir iconData;
+  const auto previousData = qgetenv("XDG_DATA_HOME");
+  const auto previousConfig = qgetenv("XDG_CONFIG_HOME");
+  qputenv("XDG_DATA_HOME", iconData.path().toUtf8());
+  qputenv("XDG_CONFIG_HOME", (iconData.path() + "/config").toUtf8());
+  const auto entryPath = iconData.path() + "/applications/omarchy-clock.desktop";
+  QDir().mkpath(QFileInfo(entryPath).absolutePath());
+  QFile entry(entryPath);
+  CHECK(entry.open(QIODevice::WriteOnly));
+  entry.write("[Desktop Entry]\nName=Omarchy Clock\nExec=custom-launch --flag\nIcon=omarchy-clock\n");
+  entry.close();
+  CHECK(updateLauncherIcon(QColor("#111111")));
+  CHECK(entry.open(QIODevice::ReadOnly));
+  auto firstEntry = entry.readAll();
+  entry.close();
+  CHECK(firstEntry.contains("Icon=omarchy-clock-111111"));
+  CHECK(firstEntry.contains("Exec=custom-launch --flag"));
+  CHECK(updateLauncherIcon(QColor("#ffffff")));
+  CHECK(entry.open(QIODevice::ReadOnly));
+  auto nextEntry = entry.readAll();
+  entry.close();
+  CHECK(nextEntry.contains("Icon=omarchy-clock-ffffff"));
+  QFile launcherSvg(iconData.path() + "/icons/hicolor/scalable/apps/omarchy-clock-ffffff.svg");
+  CHECK(launcherSvg.open(QIODevice::ReadOnly));
+  CHECK(launcherSvg.readAll().contains("fill=\"#ffffff\""));
+  if (previousData.isEmpty()) qunsetenv("XDG_DATA_HOME");
+  else qputenv("XDG_DATA_HOME", previousData);
+  if (previousConfig.isEmpty()) qunsetenv("XDG_CONFIG_HOME");
+  else qputenv("XDG_CONFIG_HOME", previousConfig);
   QFile::remove(colors.fileName());
   theme.reload();
   CHECK(theme.colors()["background"].value<QColor>() == QColor("#080a0e"));

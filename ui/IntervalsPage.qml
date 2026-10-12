@@ -75,7 +75,6 @@ ScrollView {
                 AppButton { text: "Skip phase"; enabled: !!page.live.running; onClicked: engine.skipInterval(page.live.id) }
                 AppButton { text: "Reset"; onClicked: engine.resetInterval(page.live.id) }
                 AppButton { objectName: "editIntervalButton"; text: "Edit"; enabled: !page.live.running; onClicked: page.compose(page.live.id) }
-                AppButton { iconName: "focus"; tip: "Focus display"; onClicked: appWindow.enterFocus("interval", page.live.id) }
                 AppButton { iconName: "trash"; tip: "Delete program"; enabled: !page.live.running; onClicked: { let id = page.live.id; appWindow.confirm("Delete program?", "This removes the saved interval program. Recorded sessions stay in History.", function() { engine.removeInterval(id); appWindow.ensureSelections() }) } }
             }
             Text { text: (page.live.status || "Ready") + " · " + engine.humanDuration(page.live.totalRemaining || 0) + " remaining in program"; color: theme.colors.muted; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }

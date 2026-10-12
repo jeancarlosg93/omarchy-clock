@@ -13,7 +13,7 @@ ScrollView {
     ColumnLayout {
         width: page.availableWidth
         spacing: 20
-        PageTitle { Layout.fillWidth: true; title: "Stopwatch"; subtitle: "Measure a session. Keep the laps and the story."; AppButton { iconName: "focus"; tip: "Focus display"; onClicked: appWindow.enterFocus("stopwatch", "stopwatch") } }
+        PageTitle { Layout.fillWidth: true; title: "Stopwatch"; subtitle: "Measure a session. Keep the laps and the story." }
         Field { id: sessionName; objectName: "stopwatchNameField"; Layout.fillWidth: true; Component.onCompleted: text = engine.stopwatch.title || "Stopwatch"; maximumLength: 120; placeholderText: "Session name"; onTextEdited: page.nameDirty = true; onEditingFinished: { engine.renameStopwatch(text); page.nameDirty = false; text = engine.stopwatch.title || "Stopwatch" } Accessible.name: "Stopwatch session name" }
         TimeFace { Layout.fillWidth: true; Layout.preferredHeight: page.height > 650 ? 230 : 160; time: page.live.display; fraction: page.live.fraction }
         Flow {

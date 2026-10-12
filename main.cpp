@@ -1,4 +1,5 @@
 #include "clockmodel.h"
+#include "appicon.h"
 #include "desktop.h"
 #include "timekeeper.h"
 #include <QApplication>
@@ -19,12 +20,18 @@
 
 int main(int argc, char **argv) {
   umask(0077);
+  bool iconOnly = false;
+  for (int i = 1; i < argc; ++i)
+    if (QByteArray(argv[i]) == "--update-icon") iconOnly = true;
+  if (iconOnly) {
+    qputenv("QT_QPA_PLATFORM", "offscreen");
+    qputenv("QT_QPA_PLATFORMTHEME", "");
+  }
   QApplication app(argc, argv);
   app.setApplicationName("Omarchy Clock");
   app.setOrganizationName("OmarchyClock");
-  app.setApplicationVersion("2.1.4");
+  app.setApplicationVersion("2.1.5");
   app.setDesktopFileName("omarchy-clock");
-  app.setWindowIcon(QIcon(":/omarchy-clock.svg"));
   app.setQuitOnLastWindowClosed(false);
   QQuickStyle::setStyle("Basic");
   qInstallMessageHandler(
@@ -33,6 +40,10 @@ int main(int argc, char **argv) {
           fprintf(stderr, "%s\n", qPrintable(message));
       });
   auto args = app.arguments();
+  if (iconOnly) {
+    Theme theme;
+    return updateLauncherIcon(theme.colors()["foreground"].value<QColor>()) ? 0 : 2;
+  }
   bool capture = args.contains("--capture"),
        testAlert = args.contains("--test-notification"),
        testBar = args.contains("--test-bar"),
@@ -201,6 +212,7 @@ int main(int argc, char **argv) {
       auto choice = window->findChild<QObject *>(argument("--open-choice"));
       auto popup = choice ? qvariant_cast<QObject *>(choice->property("popup"))
                           : nullptr;
+      if (!popup) popup = choice; // Menus are already popups; ComboBoxes own one.
       if (popup)
         QMetaObject::invokeMethod(popup, "open");
     });

@@ -9,6 +9,7 @@
 class Desktop : public QObject {
   Q_OBJECT
   Q_PROPERTY(QObject *focusedWindow READ focusedWindow NOTIFY focusChanged)
+  Q_PROPERTY(QString iconSource READ iconSource NOTIFY changed)
   Q_PROPERTY(bool trayAvailable READ trayAvailable NOTIFY changed)
   Q_PROPERTY(bool autoStart READ autoStart NOTIFY changed)
   Q_PROPERTY(QString showShortcut READ showShortcut CONSTANT)
@@ -17,6 +18,7 @@ public:
   Desktop(Timekeeper *engine, Theme *theme, bool ephemeral = false,
           QObject *parent = nullptr);
   QObject *focusedWindow() const;
+  QString iconSource() const;
   bool trayAvailable() const;
   bool autoStart() const;
   QString showShortcut() const;

@@ -45,7 +45,6 @@ Item {
             AppButton { visible: appWindow && appWindow.focusKind === "stopwatch"; text: "Lap"; enabled: !!focusView.live.running; onClicked: engine.lap() }
             AppButton { visible: appWindow && appWindow.focusKind === "timer"; text: "+1 min"; onClicked: engine.addTime(appWindow.focusId, 60) }
             AppButton { visible: appWindow && appWindow.focusKind === "interval"; text: "Skip phase"; enabled: !!focusView.live.running; onClicked: engine.skipInterval(appWindow.focusId) }
-            AppButton { text: "Back to tools"; onClicked: appWindow.focusMode = false }
         }
     }
 }

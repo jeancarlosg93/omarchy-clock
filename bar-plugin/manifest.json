@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "jeanc.omarchy-clock",
   "name": "Omarchy Clock",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "author": "Jean Carlos",
   "description": "Live running clocks from the native Omarchy Clock app",
   "kinds": ["service", "bar-widget"],

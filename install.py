@@ -14,7 +14,14 @@ integration = home / '.local/share/omarchy-clock/integration.json'
 bar_config = home / '.config/omarchy/shell.json'
 plugin_id = 'jeanc.omarchy-clock'
 plugin_dir = home / '.config/omarchy/plugins' / plugin_id
+icon_hook = home / '.config/omarchy/hooks/theme-set.d/omarchy-clock-icon-hook'
 plugin_sources = sorted((project / 'bar-plugin').iterdir(), key=lambda p: p.name == 'manifest.json')
+bar_code_changed = any(p.is_file() and (p.suffix in ('.qml', '.js') or p.name == 'qmldir')
+                       and (not (plugin_dir / p.name).exists() or p.read_bytes() != (plugin_dir / p.name).read_bytes())
+                       for p in plugin_sources)
+licenses = [(project / 'LICENSE', home / '.local/share/omarchy-clock/licenses/MIT.txt'),
+            (project / 'data/clock-icon-APACHE-2.0.txt', home / '.local/share/omarchy-clock/licenses/Apache-2.0.txt'),
+            (project / 'data/clock-icon-LICENSE.txt', home / '.local/share/omarchy-clock/licenses/clock-icon-NOTICE.txt')]
 stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
 backup_root = home / '.local/share/omarchy-clock/backups' / stamp
 if not binary.is_file():
@@ -73,6 +80,8 @@ paths = [config, module, startup, integration, target,
          home / '.local/share/applications/omarchy-clock.desktop',
          home / '.local/share/icons/hicolor/scalable/apps/omarchy-clock.svg']
 paths += [bar_config] + [plugin_dir / p.name for p in plugin_sources if p.is_file()]
+paths.append(icon_hook)
+paths += [destination for _, destination in licenses]
 backups = {p: backup(p) for p in paths}
 backup(home / '.config/OmarchyClock/Omarchy Clock.conf')
 # SQLite online backup also works if a headless background instance was just stopped.
@@ -89,7 +98,7 @@ try:
         (binary, target),
         (project / 'omarchy-clock.desktop', paths[5]),
         (project / 'omarchy-clock.svg', paths[6]),
-    ]:
+    ] + licenses:
         destination.parent.mkdir(parents=True, exist_ok=True)
         temporary = destination.with_name(destination.name + '.installing')
         shutil.copy2(source, temporary)
@@ -153,8 +162,12 @@ try:
     if errors not in ('', 'ok'):
         raise RuntimeError('Hyprland configuration errors: ' + errors)
     run('update-desktop-database', str(home / '.local/share/applications'))
+    run('omarchy', 'hook', 'install', 'theme-set', str(project / 'omarchy-clock-icon-hook'))
+    subprocess.run([str(target), '--update-icon'], env=dict(os.environ, QT_QPA_PLATFORM='offscreen'), check=True, capture_output=True)
     if shutil.which('gtk-update-icon-cache'):
         subprocess.run(['gtk-update-icon-cache', '-f', '-t', str(home / '.local/share/icons/hicolor')], check=False, capture_output=True)
+    if bar_code_changed:
+        run('omarchy', 'restart', 'shell')
 except Exception:
     for path, saved in backups.items():
         if saved:
@@ -162,8 +175,10 @@ except Exception:
         elif path.exists():
             path.unlink()
     subprocess.run(['hyprctl', 'reload'], check=False, capture_output=True)
+    if bar_code_changed:
+        subprocess.run(['omarchy', 'restart', 'shell'], check=False, capture_output=True)
     raise
-print('Installed Omarchy Clock 2.1.4:', target)
+print('Installed Omarchy Clock 2.1.5:', target)
 print('Backups:', backup_root)
 print('Show/hide:', 'Super+Ctrl+Alt+' + show_key.upper())
 print('Start/pause:', 'Super+Ctrl+Alt+' + pause_key.capitalize())

@@ -13,7 +13,7 @@ ScrollView {
     ColumnLayout {
         width: page.availableWidth
         spacing: 24
-        PageTitle { Layout.fillWidth: true; title: "Time tracking"; subtitle: "Record the work, then see where your time went."; AppButton { iconName: "focus"; tip: "Focus display"; enabled: page.live.title.length > 0; onClicked: appWindow.enterFocus("tracking", "tracking") } }
+        PageTitle { Layout.fillWidth: true; title: "Time tracking"; subtitle: "Record the work, then see where your time went." }
         ColumnLayout {
             visible: page.live.title.length > 0
             Layout.fillWidth: true

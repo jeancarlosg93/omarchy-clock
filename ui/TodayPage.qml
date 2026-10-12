@@ -21,7 +21,7 @@ ScrollView {
                 Text { text: page.local.display; color: theme.colors.foreground; font.family: theme.fontFamily; font.pixelSize: page.width < 500 ? 38 : 54; Layout.fillWidth: true; elide: Text.ElideRight }
                 Text { text: engine.reports.today + " tracked today · " + engine.reports.completed + " recorded events"; color: theme.colors.muted; font.pixelSize: 13; wrapMode: Text.WordWrap; Layout.fillWidth: true }
             }
-            AppButton { iconName: "world"; tip: "Local clock in focus display"; onClicked: appWindow.enterFocus("world", "") }
+            AppButton { iconName: "world"; selected: appWindow.focusKind === "world" && appWindow.focusId === ""; tip: "Select local clock, then use Focus in the header"; onClicked: appWindow.setFocusClock("world", "") }
         }
         Flow {
             Layout.fillWidth: true

@@ -15,6 +15,7 @@ Image {
         tracking: '<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V3h8v4M3 12h18M10 12v3h4v-3"/>',
         history: '<path d="M3 5v5h5M3 10a9 9 0 1 1 2 8M12 7v5l3 2"/>',
         settings: '<path d="M4 5h16M4 12h16M4 19h16"/><circle cx="8" cy="5" r="2" fill="' + color + '"/><circle cx="16" cy="12" r="2" fill="' + color + '"/><circle cx="10" cy="19" r="2" fill="' + color + '"/>',
+        more: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
         focus: '<path d="M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5"/>',
         compact: '<rect x="3" y="4" width="18" height="16" rx="2"/><rect x="12" y="12" width="9" height="8" rx="1"/>',
         close: '<path d="M5 5l14 14M19 5L5 19"/>',

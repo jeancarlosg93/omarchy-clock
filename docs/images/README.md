@@ -1,8 +1,9 @@
 # Screenshot provenance
 
-All screenshots were captured from the native app alone on an otherwise empty Omarchy workspace on 2026-10-12, using the Catppuccin Latte theme and temporary in-memory sample activity. No personal history or user database was used. The world clocks show live time.
+All images show Omarchy Clock 2.1.5 alone on an otherwise empty Omarchy workspace, captured on 2026-10-12 with temporary in-memory sample activity. No personal history or user database was used. World clocks show live time.
 
-- `timers.png`, `world-clocks.png`, `compact.png`, and `compact-small.png` were captured from version 2.1.2 with `grim`. Window bounds and their border were included; the border adds six pixels to each dimension. The main windows were 1200×1050, and the compact windows were 360×240 and 160×110.
-- `focus-intervals.png` and `stopwatch.png` were refreshed from version 2.1.4 using the app's native Wayland `--capture --demo --focus` mode. They show fullscreen interval Focus at 2560×1440 and stopwatch Focus at 1200×1050. These captures include only the app content, with no window border.
+`timers.png`, `world-clocks.png`, `stopwatch.png`, `compact.png`, and `compact-small.png` were captured with `grim`, including the native border (six additional pixels per dimension). Main windows are 1200×1050; compact windows are 360×240 and 160×110. The smallest compact was resized by the compositor before capturing.
 
-The desktop bar, other applications, notifications, cursor, and wallpaper are excluded. The screenshots are included under the repository's MIT license; PNG metadata records their capture origin. Private review captures and runtime data are excluded from the repository.
+`focus-intervals.png`, `settings-menu.png`, and `settings-menu-dark.png` use the app's native Wayland `--capture --demo` mode, without borders. Fullscreen Focus is 2560×1440; Settings menus are 1150×780. Light images use Catppuccin Latte. The dark menu uses an isolated Catppuccin theme-state fixture; the user's desktop theme was not switched.
+
+Desktop bar, other applications, notifications, cursor, and wallpaper are excluded. PNG metadata records capture origin. These screenshots are included under the repository's MIT license; the depicted clock-outline artwork retains its Apache 2.0 license. Private review captures and runtime data are excluded.

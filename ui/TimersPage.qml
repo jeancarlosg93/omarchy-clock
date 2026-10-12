@@ -72,7 +72,6 @@ ScrollView {
                 AppButton { text: "+5 min"; onClicked: engine.addTime(page.live.id, 300) }
                 AppButton { text: "Reset"; onClicked: engine.resetTimer(page.live.id) }
                 AppButton { objectName: "editTimerButton"; text: "Edit"; enabled: !page.live.running; onClicked: page.compose(page.live.id) }
-                AppButton { iconName: "focus"; tip: "Focus display"; onClicked: appWindow.enterFocus("timer", page.live.id) }
                 AppButton { iconName: "trash"; tip: "Delete timer"; enabled: !page.live.running; onClicked: { let id = page.live.id; appWindow.confirm("Delete timer?", "This removes the saved timer. Recorded sessions stay in History.", function() { engine.removeTimer(id); appWindow.ensureSelections() }) } }
             }
         }

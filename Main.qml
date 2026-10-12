@@ -38,6 +38,7 @@ ApplicationWindow {
         options.push({kind:"stopwatch",id:"stopwatch",title:"Stopwatch"})
         for (let p of engine.intervals) options.push({kind:"interval",id:p.id,title:"Intervals · " + p.title})
         if (engine.trackHasActivity) options.push({kind:"tracking",id:"tracking",title:"Tracking"})
+        options.push({kind:"world",id:"",title:"Local time"})
         for (let z of engine.favoriteZones) options.push({kind:"world",id:z,title:z.replace(/_/g," ")})
         return options
     }
@@ -130,16 +131,26 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.preferredHeight: 42
             Layout.maximumHeight: 42
-            spacing: 8
-            UI.Icon { visible: !root.wide && root.width >= 560; name: "timer"; color: theme.colors.foreground; width: 24; height: 24 }
+            spacing: root.width < 560 ? 6 : 8
+            Image { objectName: "appClockIcon"; visible: root.wide || root.width >= 560; source: shell.iconSource; Layout.preferredWidth: 20; Layout.preferredHeight: 20; sourceSize.width: 40; sourceSize.height: 40; Accessible.ignored: true }
             Text { visible: root.wide; text: "Omarchy Clock"; color: theme.colors.foreground; font.pixelSize: 18; font.weight: Font.DemiBold }
             UI.Choice { objectName: "toolChoice"; visible: !root.wide && !root.focusMode; Layout.preferredWidth: root.width < 560 ? 148 : 170; model: root.pages.map(function(p) { return p.title }); currentIndex: Math.max(0, model.indexOf(root.page)); onActivated: root.go(currentText); Accessible.name: "Timekeeping tool" }
             Item { Layout.fillWidth: true; Layout.fillHeight: true; MouseArea { anchors.fill: parent; onPressed: root.startSystemMove(); onDoubleClicked: root.toggleFull() } }
-            UI.AppButton { visible: root.width >= 560; text: root.focusMode ? "Back" : root.width > 720 ? "Focus" : ""; iconName: root.focusMode ? "close" : "focus"; tip: root.focusMode ? "Back to tools" : "Focus on the selected clock"; onClicked: root.focusMode = !root.focusMode }
+            UI.AppButton { objectName: "focusButton"; text: root.width > 720 ? root.focusMode ? "Back" : "Focus" : ""; iconName: root.focusMode ? "close" : "focus"; tip: root.focusMode ? "Back to tools" : "Focus on the selected clock"; onClicked: root.focusMode = !root.focusMode }
             UI.AppButton { iconName: "compact"; tip: "Compact floating display · Ctrl+Shift+M"; onClicked: root.toggleCompact() }
             UI.AppButton { objectName: "fullscreenButton"; iconName: "focus"; text: root.width > 720 ? root.full ? "Exit full" : "Full screen" : ""; tip: "F11 · Toggle fullscreen"; onClicked: root.toggleFull() }
-            UI.AppButton { iconName: "settings"; tip: "App menu"; onClicked: appMenu.popup() }
-            Menu { id: appMenu; MenuItem { text: root.focusMode ? "Back to tools" : "Focus selected clock"; onTriggered: root.focusMode = !root.focusMode } MenuItem { text: "Hide to tray"; enabled: shell.trayAvailable; onTriggered: root.hide() } MenuItem { text: "Pause active clocks"; onTriggered: engine.pauseAll() } MenuItem { text: "Settings"; onTriggered: root.go("Settings") } MenuSeparator {} MenuItem { text: "Quit app"; onTriggered: root.requestQuit() } }
+            UI.AppButton { id: menuButton; objectName: "appMenuButton"; iconName: "more"; tip: "App menu"; onClicked: appMenu.popup() }
+            Menu {
+                id: appMenu
+                objectName: "appMenu"
+                parent: menuButton
+                x: menuButton.width - width
+                y: menuButton.height + 8
+                MenuItem { text: "Hide to tray"; enabled: shell.trayAvailable; onTriggered: root.hide() }
+                MenuItem { text: "Pause active clocks"; enabled: engine.activeClocks.length > 0; onTriggered: engine.pauseAll() }
+                MenuSeparator {}
+                MenuItem { text: "Quit app"; onTriggered: root.requestQuit() }
+            }
         }
         Rectangle { Layout.fillWidth: true; height: 1; color: theme.colors.border }
         RowLayout {
@@ -171,7 +182,6 @@ ApplicationWindow {
                 Item { Layout.fillHeight: true }
                 Text { text: theme.name; font.pixelSize: 11; color: theme.colors.muted; Layout.fillWidth: true; elide: Text.ElideRight }
                 Text { text: engine.activeClocks.length + " clocks running"; font.pixelSize: 11; color: theme.colors.muted }
-                UI.AppButton { text: "Hide to tray"; iconName: "compact"; enabled: shell.trayAvailable; Layout.fillWidth: true; onClicked: root.hide() }
             }
             Loader { id: pageLoader; objectName: "pageLoader"; visible: !root.focusMode; Layout.fillWidth: true; Layout.minimumWidth: 0; Layout.fillHeight: true }
             UI.FocusView { visible: root.focusMode; appWindow: root; Layout.fillWidth: true; Layout.fillHeight: true }

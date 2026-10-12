@@ -1,4 +1,5 @@
 #include "desktop.h"
+#include "appicon.h"
 #include <QAction>
 #include <QApplication>
 #include <QDBusConnection>
@@ -50,39 +51,17 @@ Desktop::Desktop(Timekeeper *engine, Theme *theme, bool ephemeral,
         QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) +
         "/omarchy-clock-status.json");
   });
-  m_tray.setIcon(QIcon(":/omarchy-clock.svg"));
   m_tray.setToolTip("Omarchy Clock · timekeeping continues in the tray");
   auto menu = new QMenu();
   menu->setParent(nullptr);
-  for (const QString &page :
-       QStringList{"Today", "Timers", "Stopwatch", "Alarms", "Intervals",
-                   "World clocks", "Tracking", "History"}) {
-    auto action = menu->addAction(page);
-    connect(action, &QAction::triggered, this, [this, page] {
-      if (m_window) {
-        command("show");
-        QMetaObject::invokeMethod(m_window, "go",
-                                  Q_ARG(QVariant, QVariant(page)),
-                                  Q_ARG(QVariant, QVariant(false)));
-      }
-    });
-  }
-  menu->addSeparator();
-  auto toggle = menu->addAction("Start / pause focused clock");
-  connect(toggle, &QAction::triggered, this, [this] { command("pause"); });
-  auto compact = menu->addAction("Compact display");
-  connect(compact, &QAction::triggered, this, [this] { command("compact"); });
-  auto pause = menu->addAction("Pause all active clocks");
+  auto open = menu->addAction("Open Omarchy Clock");
+  connect(open, &QAction::triggered, this, [this] { command("show"); });
+  auto pause = menu->addAction("Pause active clocks");
   connect(pause, &QAction::triggered, engine, &Timekeeper::pauseAll);
-  menu->addSeparator();
-  auto settings = menu->addAction("Settings");
-  connect(settings, &QAction::triggered, this, [this] {
-    command("show");
-    if (m_window)
-      QMetaObject::invokeMethod(m_window, "go",
-                                Q_ARG(QVariant, QVariant("Settings")),
-                                Q_ARG(QVariant, QVariant(false)));
+  connect(menu, &QMenu::aboutToShow, this, [this, pause] {
+    pause->setEnabled(!m_engine->activeClocks().isEmpty());
   });
+  menu->addSeparator();
   auto exit = menu->addAction("Quit app…");
   connect(exit, &QAction::triggered, this, [this] { command("quit"); });
   m_tray.setContextMenu(menu);
@@ -422,6 +401,10 @@ void Desktop::quit() {
   m_engine->save();
   qApp->quit();
 }
+QString Desktop::iconSource() const {
+  return "data:image/svg+xml;base64," + QString::fromLatin1(
+      clockIconSvg(m_theme->colors()["foreground"].value<QColor>()).toBase64());
+}
 void Desktop::applyPalette() {
   QPalette palette;
   auto c = m_theme->colors();
@@ -436,4 +419,11 @@ void Desktop::applyPalette() {
   palette.setColor(QPalette::HighlightedText, c["onAccent"].value<QColor>());
   palette.setColor(QPalette::Mid, c["border"].value<QColor>());
   QApplication::setPalette(palette);
+  const auto foreground = c["foreground"].value<QColor>();
+  const auto icon = clockIcon(foreground);
+  QApplication::setWindowIcon(icon);
+  m_tray.setIcon(icon);
+  if (!m_ephemeral && !updateLauncherIcon(foreground))
+    qWarning("Could not update the Omarchy Clock launcher icon.");
+  emit changed();
 }

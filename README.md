@@ -1,4 +1,4 @@
-# Omarchy Clock 2.1.4
+# Omarchy Clock 2.1.5
 
 A native Qt Quick timekeeping app for Omarchy. It follows the current Omarchy colors and font, runs locally, and keeps clocks active while its window is hidden in the tray.
 
@@ -20,6 +20,14 @@ Captured from the native app alone on an empty Omarchy workspace, using illustra
 <summary>Fullscreen interval Focus with horizontal controls</summary>
 
 ![Pomodoro fullscreen Focus with a centered horizontal action row](docs/images/focus-intervals.png)
+
+</details>
+
+<details>
+<summary>Consistent controls in light and dark themes</summary>
+
+![Settings navigation and a single global app menu](docs/images/settings-menu.png)
+![Theme-colored clock mark and controls in Catppuccin](docs/images/settings-menu-dark.png)
 
 </details>
 
@@ -46,7 +54,7 @@ Editing a paused timer or program resets its progress to the new definition. A p
 
 ## Windows and keyboard
 
-The main window floats and resizes freely, with a 380×460 minimum. Drag empty space in the header to move it; drag its corners or use Omarchy's usual window resize gesture. The wide navigation rail becomes a tool selector below 960 pixels.
+The main window floats and resizes freely, with a 380×460 minimum. Drag empty space in the header to move it; drag its corners or use Omarchy's usual window resize gesture. The wide navigation rail becomes a tool selector below 960 pixels. Settings is part of this navigation. The header contains Focus/Back, Compact, Fullscreen, and an ellipsis app menu; Hide to tray, Pause active clocks, and Quit live only in that menu. Focus shows only clock-specific controls below the time. Choose a clock in its tool or world-clock list, then use the shared header Focus action; local time is also available in the Focus selector.
 
 **Focus** removes the tool navigation and enlarges the selected clock. **Full screen** fills the monitor. The **compact display** is a separately resizable floating window (360×240 initially, down to 160×110), pinned across workspaces by its app-specific Hyprland rule. It follows the main app's chosen focus clock. Hiding or closing the main window to the tray leaves the compact display open; closing the compact display affects only that window. Explicitly quitting the app closes both.
 
@@ -76,11 +84,17 @@ A user-owned **Omarchy Clock** bar widget is installed beside Chime when present
 
 Ready/finished clocks disappear. Settings → **Background operation** → **Show active clocks in the Omarchy bar** hides the widget. It reads app state once per second, hides stale data after six seconds, and removes the readout on normal app exit. The native app owns timing and alerts, so the widget adds no duplicate notifications.
 
+## Theme-aware clock icon
+
+The shared clock-outline mark is the Material Design icon available in Omarchy’s Nerd Font menu set (`nf-md-clock_outline`, U+F0150). It has a transparent background. The app header, window and tray follow the live theme foreground; the bar uses the native Nerd Font glyph and bar color. The launcher uses a colored SVG with a fresh icon identity on theme changes, avoiding stale image caches.
+
+A user-owned `~/.config/omarchy/hooks/theme-set.d/omarchy-clock-icon-hook` refreshes the launcher even while the app is closed. `omarchy-clock --update-icon` updates only the icon files/desktop entry, without starting clocks. See [icon source and licensing](data/clock-icon-README.md). Omarchy’s menu definitions are in `/usr/share/omarchy/default/omarchy/omarchy-menu.jsonc`, and the glyphs themselves live in the installed Nerd Font files under `/usr/share/fonts/TTF/`.
+
 ## Background alerts
 
-Notifications are **silent by default**,  Sound is opt-in per clock or globally in Settings. The notification daemon receives `suppress-sound`; the app plays its own optional alarm sound through the existing PipeWire/PulseAudio player.
+Notifications are **silent by default**. Sound is opt-in per clock or globally in Settings. The notification daemon receives `suppress-sound`; the app plays its own optional alarm sound through the existing PipeWire/PulseAudio player.
 
-Closing the main window keeps the app running when a tray is available and **Keep running when the window closes** is enabled. The tray menu opens each tool, pauses active clocks, controls the focused clock, opens the compact display, and quits. Without a tray, close follows the quit flow; active clocks and armed alarms trigger a confirmation.
+Closing the main window keeps the app running when a tray is available and **Keep running when the window closes** is enabled. The tray menu opens the app, pauses active clocks, and quits. Without a tray, close follows the quit flow; active clocks and armed alarms trigger a confirmation.
 
 Login startup is enabled on first suite installation and can be disabled in Settings. It starts hidden. One local instance handles launcher and global shortcut commands.
 
@@ -107,10 +121,10 @@ To back up manually, quit through the app menu and copy the database and prefere
 
 ## Build, test and reinstall
 
-Requires Qt 6.7+ Quick, Quick Controls, Widgets, DBus, Network, Sql (SQLite plugin), and C++20, CMake and Ninja. Qt Test is needed when building tests. The installer targets Omarchy with Hyprland Lua configuration and `omarchy-shell`. It also needs `desktop-file-validate` and desktop integration tools. On Arch/Omarchy, build dependencies can be installed with:
+Requires Qt 6.7+ Quick, Quick Controls, Widgets, DBus, Network, Svg, Sql (SQLite plugin), and C++20, CMake and Ninja. Qt Test is needed when building tests. The installer targets Omarchy with Hyprland Lua configuration and `omarchy-shell`. It also needs `desktop-file-validate` and desktop integration tools. On Arch/Omarchy, build dependencies can be installed with:
 
 ```sh
-sudo pacman -S --needed base-devel cmake ninja qt6-base qt6-declarative desktop-file-utils
+sudo pacman -S --needed base-devel cmake ninja qt6-base qt6-declarative qt6-svg desktop-file-utils
 ```
 
 ```sh
@@ -120,7 +134,7 @@ ctest --test-dir build --output-on-failure
 python install.py
 ```
 
-The installer validates the desktop file, gracefully stops an existing instance, backs up replaced files/data, installs the binary/icon/launcher, adds app-specific Lua rules and unused shortcuts plus the user-owned bar widget, reloads Hyprland, checks config errors, restores replaced files on integration failure, then waits for the migrated native window to open. It backs up bar configuration/plugin files and preserves later manual removal of the widget. It preserves an existing choice to disable login startup.
+When bar plugin code changes, the installer refreshes the shell to clear cached components. The installer validates the desktop file, gracefully stops an existing instance, backs up replaced files/data, installs the binary/icon/launcher, adds app-specific Lua rules and unused shortcuts plus the user-owned bar widget, reloads Hyprland, checks config errors, restores replaced files on integration failure, then waits for the migrated native window to open. It backs up bar configuration/plugin files and preserves later manual removal of the widget. It preserves an existing choice to disable login startup.
 
 Useful commands:
 
@@ -160,4 +174,4 @@ The bar's source and bridge contract are documented in [bar-plugin/README.md](ba
 
 ## License
 
-Application source is licensed under [MIT](LICENSE). Bundled map data is public domain; its sources and attribution are recorded in [data/README.md](data/README.md). Qt and system dependencies retain their own licenses.
+Application source is licensed under [MIT](LICENSE). The reused clock-outline icon is Apache 2.0; see [its license and provenance](data/clock-icon-README.md). Bundled map data is public domain; its sources and attribution are recorded in [data/README.md](data/README.md). Qt and system dependencies retain their own licenses.
