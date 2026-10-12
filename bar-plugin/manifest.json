@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "jeanc.omarchy-clock",
+  "name": "Omarchy Clock",
+  "version": "2.1.0",
+  "author": "Jean Carlos",
+  "description": "Live running clocks from the native Omarchy Clock app",
+  "kinds": ["service", "bar-widget"],
+  "keepLoaded": true,
+  "entryPoints": {"service": "Service.qml", "barWidget": "BarWidget.qml"},
+  "barWidget": {
+    "displayName": "Omarchy Clock",
+    "description": "Running timer, stopwatch, interval or tracked activity",
+    "category": "Time",
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}

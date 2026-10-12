@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Omarchy Clock
+GenericName=Timekeeping
+Comment=Timers, stopwatch, alarms, intervals, world clocks and time tracking
+Exec=omarchy-clock
+Icon=omarchy-clock
+Terminal=false
+Categories=Utility;Clock;
+Keywords=timer;stopwatch;countdown;alarm;pomodoro;interval;timezone;tracking;time;omarchy;
+StartupNotify=true
+StartupWMClass=omarchy-clock

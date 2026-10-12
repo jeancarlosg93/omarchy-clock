@@ -1,0 +1,27 @@
+# Local build and Python artifacts
+/build/
+__pycache__/
+*.py[cod]
+*.previous
+*.log
+
+# Private review captures, local notes and installation backups
+/.impeccable/
+/screenshots/
+/backups/
+/PRODUCT.md
+/SURFACE.md
+/REVIEW.md
+
+# Runtime data, exports, credentials and machine-local configuration
+*.sqlite*
+*.db
+*.csv
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.conf.local
